@@ -7,6 +7,7 @@ import 'package:movie_app/network/retrofit_data_agent_impl.dart';
 import 'package:movie_app/persistence/daos/actor_dao.dart';
 import 'package:movie_app/persistence/daos/genre_dao.dart';
 import 'package:movie_app/persistence/daos/movie_dao.dart';
+import 'package:stream_transform/stream_transform.dart';
 
 class MovieModelImpl extends MovieModel {
   final MovieDataAgent _dataAgent = RetrofitDataAgentImpl();
@@ -22,48 +23,48 @@ class MovieModelImpl extends MovieModel {
   GenreDao genreDao = GenreDao();
   MovieDao movieDao = MovieDao();
 
-  // Network
-  @override
-  Future<List<MovieVO>> getNowPlayingMovie(int page) {
-    return _dataAgent.getNowPlayingMovies(page).then((movies) async {
-      List<MovieVO> nowPlayingMovies = movies!.map((movie) {
-        movie.isNowPlaying = true;
-        movie.isPopular = false;
-        movie.isTopRated = false;
-        return movie;
-      }).toList();
-      movieDao.saveAllMovies(nowPlayingMovies);
-      return Future.value(movies);
-    });
-  }
-
-  @override
-  Future<List<MovieVO>> getPopularMovies(int page) {
-    return _dataAgent.getPopularMovies(page).then((movies) async {
-      List<MovieVO> popularMovies = movies!.map((movie) {
-        movie.isNowPlaying = false;
-        movie.isPopular = true;
-        movie.isTopRated = false;
-        return movie;
-      }).toList();
-      movieDao.saveAllMovies(popularMovies);
-      return Future.value(movies);
-    });
-  }
-
-  @override
-  Future<List<MovieVO>> getTopRatedMovies(int page) {
-    return _dataAgent.getTopRatedMovies(page).then((movies) async {
-      List<MovieVO> topRatedMovies = movies!.map((movie) {
-        movie.isNowPlaying = false;
-        movie.isPopular = false;
-        movie.isTopRated = true;
-        return movie;
-      }).toList();
-      movieDao.saveAllMovies(topRatedMovies);
-      return Future.value(movies);
-    });
-  }
+  /// Network
+  // @override
+  // Future<List<MovieVO>> getNowPlayingMovie(int page) {
+  //   return _dataAgent.getNowPlayingMovies(page).then((movies) async {
+  //     List<MovieVO> nowPlayingMovies = movies!.map((movie) {
+  //       movie.isNowPlaying = true;
+  //       movie.isPopular = false;
+  //       movie.isTopRated = false;
+  //       return movie;
+  //     }).toList();
+  //     movieDao.saveAllMovies(nowPlayingMovies);
+  //     return Future.value(movies);
+  //   });
+  // }
+  //
+  // @override
+  // Future<List<MovieVO>> getPopularMovies(int page) {
+  //   return _dataAgent.getPopularMovies(page).then((movies) async {
+  //     List<MovieVO> popularMovies = movies!.map((movie) {
+  //       movie.isNowPlaying = false;
+  //       movie.isPopular = true;
+  //       movie.isTopRated = false;
+  //       return movie;
+  //     }).toList();
+  //     movieDao.saveAllMovies(popularMovies);
+  //     return Future.value(movies);
+  //   });
+  // }
+  //
+  // @override
+  // Future<List<MovieVO>> getTopRatedMovies(int page) {
+  //   return _dataAgent.getTopRatedMovies(page).then((movies) async {
+  //     List<MovieVO> topRatedMovies = movies!.map((movie) {
+  //       movie.isNowPlaying = false;
+  //       movie.isPopular = false;
+  //       movie.isTopRated = true;
+  //       return movie;
+  //     }).toList();
+  //     movieDao.saveAllMovies(topRatedMovies);
+  //     return Future.value(movies);
+  //   });
+  // }
 
   @override
   Future<List<MovieVO>?> getMovieByGenre(int genreId) {
@@ -99,7 +100,7 @@ class MovieModelImpl extends MovieModel {
     });
   }
 
-  // from database
+  /// from database
 
   @override
   Future<List<ActorVO>> getActorsFromDatabase() {
@@ -118,25 +119,74 @@ class MovieModelImpl extends MovieModel {
 
   @override
   Future<List<MovieVO>> getNowPlayingMovieFromDatabase() {
-    return Future.value(movieDao
-        .getAllMovies()
-        .where((movie) => movie.isNowPlaying ?? true)
-        .toList());
+    getNowPlayingMovie(1);
+    return movieDao
+        .getAllMovieEventStream()
+        // ignore: void_checks
+        .startWith(movieDao.getNowPlayingMovieStream())
+        .map((event) => movieDao.getAllMovies())
+        .first;
   }
 
   @override
   Future<List<MovieVO>> getPopularMoviesFromDatabase() {
-    return Future.value(movieDao
-        .getAllMovies()
-        .where((movie) => movie.isPopular ?? true)
-        .toList());
+    getPopularMovies(1);
+    return movieDao
+        .getAllMovieEventStream()
+        // ignore: void_checks
+        .startWith(movieDao.getPopularMovieStream())
+        .map((event) => movieDao.getAllMovies())
+        .first;
   }
 
   @override
   Future<List<MovieVO>> getTopRatedMoviesFromDatabase() {
-    return Future.value(movieDao
-        .getAllMovies()
-        .where((movie) => movie.isTopRated ?? true)
-        .toList());
+    getTopRatedMovies(1);
+    return movieDao
+        .getAllMovieEventStream()
+        // ignore: void_checks
+        .startWith(movieDao.getTopRatedMovieStream())
+        .map((event) => movieDao.getAllMovies())
+        .first;
+  }
+
+  /// reactive programming
+  @override
+  void getNowPlayingMovie(int page) {
+    _dataAgent.getNowPlayingMovies(page).then((movies) async {
+      List<MovieVO> nowPlayingMovies = movies!.map((movie) {
+        movie.isNowPlaying = true;
+        movie.isPopular = false;
+        movie.isTopRated = false;
+        return movie;
+      }).toList();
+      movieDao.saveAllMovies(nowPlayingMovies);
+    });
+  }
+
+  @override
+  void getPopularMovies(int page) {
+    _dataAgent.getPopularMovies(page).then((movies) async {
+      List<MovieVO> popularMovies = movies!.map((movie) {
+        movie.isNowPlaying = false;
+        movie.isPopular = true;
+        movie.isTopRated = false;
+        return movie;
+      }).toList();
+      movieDao.saveAllMovies(popularMovies);
+    });
+  }
+
+  @override
+  void getTopRatedMovies(int page) {
+    _dataAgent.getTopRatedMovies(page).then((movies) async {
+      List<MovieVO> topRatedMovies = movies!.map((movie) {
+        movie.isNowPlaying = false;
+        movie.isPopular = false;
+        movie.isTopRated = true;
+        return movie;
+      }).toList();
+      movieDao.saveAllMovies(topRatedMovies);
+    });
   }
 }

@@ -33,14 +33,6 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void initState() {
-    /// get now playing movie
-    movieModel.getNowPlayingMovie(1).then((movieList) {
-      setState(() {
-        nowPlayingMovies = movieList;
-      });
-    }).catchError((error) {
-      debugPrint(error.toString());
-    });
 
     /// get now playing movie database
     movieModel.getNowPlayingMovieFromDatabase().then((movieList) {
@@ -51,28 +43,10 @@ class _HomePageState extends State<HomePage> {
       debugPrint(error.toString());
     });
 
-    /// get popular movie
-    movieModel.getPopularMovies(1).then((movieList) {
-      setState(() {
-        popularMovies = movieList;
-      });
-    }).catchError((error) {
-      debugPrint(error.toString());
-    });
-
     /// get popular movie database
     movieModel.getPopularMoviesFromDatabase().then((movieList) {
       setState(() {
         popularMovies = movieList;
-      });
-    }).catchError((error) {
-      debugPrint(error.toString());
-    });
-
-     /// get top rated movie
-    movieModel.getTopRatedMovies(1).then((movieList) {
-      setState(() {
-        topRatedMovies = movieList;
       });
     }).catchError((error) {
       debugPrint(error.toString());

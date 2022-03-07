@@ -26,15 +26,32 @@ class MovieDao {
   }
 
   List<MovieVO> getAllMovies() {
-    // List<MovieVO> movieListFromDatabase = getMovieBox().values.toList();
-    // movieListFromDatabase.forEach((element) {
-    //   print(element);
-    // });
-    // return movieListFromDatabase;
     return getMovieBox().values.toList();
   }
 
   Box<MovieVO> getMovieBox() {
     return Hive.box<MovieVO>(BOX_NAME_MOVIE_VO);
+  }
+
+  /// reactive programming
+  Stream<void> getAllMovieEventStream() {
+    return getMovieBox().watch();
+  }
+
+  Stream<List<MovieVO>> getNowPlayingMovieStream() {
+    return Stream.value(getAllMovies()
+        .where((element) => element.isNowPlaying ?? false)
+        .toList());
+  }
+
+  Stream<List<MovieVO>> getPopularMovieStream() {
+    return Stream.value(
+        getAllMovies().where((element) => element.isPopular ?? false).toList());
+  }
+
+  Stream<List<MovieVO>> getTopRatedMovieStream() {
+    return Stream.value(getAllMovies()
+        .where((element) => element.isTopRated ?? false)
+        .toList());
   }
 }

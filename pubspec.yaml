@@ -43,6 +43,8 @@ dependencies:
   retrofit:
   hive: ^2.0.5
   hive_flutter: ^1.1.0
+  stream_transform: ^2.0.0
+  scoped_model: ^1.1.0
 
 dev_dependencies:
   flutter_test:
