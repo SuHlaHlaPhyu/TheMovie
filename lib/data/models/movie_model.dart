@@ -8,8 +8,8 @@ abstract class MovieModel extends Model{
   void getMovieByGenre(int genreId);
   void getGenres();
   void getActors(int page);
-  Future<MovieVO> getMovieDetails(int movieId);
-  Future<List<List<ActorVO>?>> getCreditByMovie(int movieId);
+  void getMovieDetails(int movieId);
+  void getCreditByMovie(int movieId);
   //Future<List<ActorVO>> getCreditByMovie(int movieId);
 
   /// Database
@@ -18,7 +18,7 @@ abstract class MovieModel extends Model{
   void getTopRatedMoviesFromDatabase();
   void getGenresFromDatabase();
   void getActorsFromDatabase();
-  Future<MovieVO> getMovieDetailsFromDatabase(int movieId);
+  void getMovieDetailsFromDatabase(int movieId);
 
   /// Reactive programming
   void getNowPlayingMovie(int page);

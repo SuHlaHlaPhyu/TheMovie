@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:movie_app/data/models/movie_model.dart';
 import 'package:movie_app/data/models/movie_model_impl.dart';
-import 'package:movie_app/data/vos/actor_vo.dart';
 import 'package:movie_app/data/vos/movie_vo.dart';
 import 'package:movie_app/network/api_constants.dart';
 import 'package:movie_app/resources/colors.dart';
@@ -11,108 +9,70 @@ import 'package:movie_app/widgets/actors_and_creators_section_view.dart';
 import 'package:movie_app/widgets/gradient_view.dart';
 import 'package:movie_app/widgets/rating_view.dart';
 import 'package:movie_app/widgets/title_text.dart';
+import 'package:scoped_model/scoped_model.dart';
 
-class MovieDetailsPage extends StatefulWidget {
-  final int movieId;
-  MovieDetailsPage({required this.movieId});
-  @override
-  State<MovieDetailsPage> createState() => _MovieDetailsPageState();
-}
-
-class _MovieDetailsPageState extends State<MovieDetailsPage> {
-  MovieModel movieModel = MovieModelImpl();
-  List<ActorVO>? casts;
-  List<ActorVO>? crews;
-  MovieVO? movieDetails;
-
-  @override
-  void initState() {
-    /// Get Movie Details
-    movieModel.getMovieDetails(widget.movieId).then((details) {
-      setState(() {
-        movieDetails = details;
-      });
-    }).catchError((error) {
-      debugPrint(error.toString());
-    });
-
-    /// Get Movie Details Database
-    movieModel.getMovieDetailsFromDatabase(widget.movieId).then((details) {
-      setState(() {
-        movieDetails = details;
-      });
-    }).catchError((error) {
-      debugPrint(error.toString());
-    });
-
-    /// Get Credits by movies
-    movieModel.getCreditByMovie(widget.movieId).then((castAndCrews) {
-      setState(() {
-        casts = castAndCrews.first;
-        crews = castAndCrews.last;
-      });
-    }).catchError((error) {
-      debugPrint(error.toString());
-    });
-    super.initState();
-  }
-
+class MovieDetailsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        color: HOME_SCREEN_BACKGROUND_COLOR,
-        child: CustomScrollView(
-          slivers: [
-            MovieDetailsSilverAppbarView(
-              () => Navigator.pop(context),
-              movie: movieDetails,
+      body: ScopedModelDescendant<MovieModelImpl>(
+        builder: (BuildContext context, Widget? child, MovieModelImpl model) {
+          return Container(
+            color: HOME_SCREEN_BACKGROUND_COLOR,
+            child: CustomScrollView(
+              slivers: [
+                MovieDetailsSilverAppbarView(
+                      () => Navigator.pop(context),
+                  movie: model.movieDetails,
+                ),
+                SliverList(
+                  delegate: SliverChildListDelegate(
+                    [
+                      Container(
+                        margin: const EdgeInsets.symmetric(
+                          horizontal: MARGIN_MEDIUM_2,
+                        ),
+                        child: TrailerSection(
+                          genreList:
+                          model.movieDetails?.getGenreListAsStringList() ?? [],
+                          storyLine: model.movieDetails?.overview ?? "",
+                        ),
+                      ),
+                      const SizedBox(
+                        height: MARGIN_LARGE,
+                      ),
+                      ActorsAndCreatorsSectionView(
+                        MOVIE_DETAIL_SCREEN_ACTOR_TITLE,
+                        '',
+                        seeMoreButtonVisibility: false,
+                        actorList: model.casts,
+                      ),
+                      const SizedBox(
+                        height: MARGIN_LARGE,
+                      ),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: MARGIN_MEDIUM_2,
+                        ),
+                        child: AboutFilmSectionView(
+                          movie: model.movieDetails,
+                        ),
+                      ),
+                      const SizedBox(
+                        height: MARGIN_LARGE,
+                      ),
+                      ActorsAndCreatorsSectionView(
+                        MOVIE_DETAIL_SCREEN_CREATOR_TITLE,
+                        MOVIE_DETAIL_SCREEN_CREATOR_SEEMORE,
+                        actorList: model.crews,
+                      ),
+                    ],
+                  ),
+                )
+              ],
             ),
-            SliverList(
-              delegate: SliverChildListDelegate(
-                [
-                  Container(
-                    margin: const EdgeInsets.symmetric(
-                      horizontal: MARGIN_MEDIUM_2,
-                    ),
-                    child: TrailerSection(
-                      genreList: movieDetails?.getGenreListAsStringList() ?? [],
-                      storyLine: movieDetails?.overview ?? "",
-                    ),
-                  ),
-                  const SizedBox(
-                    height: MARGIN_LARGE,
-                  ),
-                  ActorsAndCreatorsSectionView(
-                    MOVIE_DETAIL_SCREEN_ACTOR_TITLE,
-                    '',
-                    seeMoreButtonVisibility: false,
-                    actorList: casts,
-                  ),
-                  const SizedBox(
-                    height: MARGIN_LARGE,
-                  ),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: MARGIN_MEDIUM_2,
-                    ),
-                    child: AboutFilmSectionView(
-                      movie: movieDetails,
-                    ),
-                  ),
-                  const SizedBox(
-                    height: MARGIN_LARGE,
-                  ),
-                  ActorsAndCreatorsSectionView(
-                    MOVIE_DETAIL_SCREEN_CREATOR_TITLE,
-                    MOVIE_DETAIL_SCREEN_CREATOR_SEEMORE,
-                    actorList: crews,
-                  ),
-                ],
-              ),
-            )
-          ],
-        ),
+          );
+        },
       ),
     );
   }

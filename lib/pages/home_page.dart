@@ -68,9 +68,7 @@ class HomePage extends StatelessWidget {
                     MovieModelImpl model) {
                   return BestPopularMoviesAndSerialsView(
                     onTapMovies: (movieId) => _navigateToMovieDetailScreen(
-                      context,
-                      movieId,
-                    ),
+                        context, movieId ?? 1, model),
                     nowPlayingMovies: model.nowPlayingMovies,
                   );
                 },
@@ -93,9 +91,7 @@ class HomePage extends StatelessWidget {
                     },
                     movieByGenre: model.movieByGenre,
                     onTapMovie: (movieId) => _navigateToMovieDetailScreen(
-                      context,
-                      movieId,
-                    ),
+                        context, movieId ?? 1, model),
                     genreList: model.genres,
                   );
                 },
@@ -136,18 +132,18 @@ class HomePage extends StatelessWidget {
 
   void _navigateToMovieDetailScreen(
     BuildContext context,
-    int? movieId,
+    int movieId,
+    MovieModelImpl model,
   ) {
-    if (movieId != null) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => MovieDetailsPage(
-            movieId: movieId,
-          ),
-        ),
-      );
-    }
+    model.getMovieDetails(movieId);
+    model.getMovieDetailsFromDatabase(movieId);
+    model.getCreditByMovie(movieId);
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => MovieDetailsPage(),
+      ),
+    );
   }
 }
 
