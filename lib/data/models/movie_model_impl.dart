@@ -17,73 +17,55 @@ class MovieModelImpl extends MovieModel {
     return _singleton;
   }
 
-  MovieModelImpl._internal();
+  MovieModelImpl._internal() {
+    getNowPlayingMovieFromDatabase();
+    getTopRatedMoviesFromDatabase();
+    getPopularMoviesFromDatabase();
+    getActors(1);
+    getActorsFromDatabase();
+    getGenres();
+    getGenresFromDatabase();
+  }
 
+  /// Daos
   ActorDao actorDao = ActorDao();
   GenreDao genreDao = GenreDao();
   MovieDao movieDao = MovieDao();
 
-  /// Network
-  // @override
-  // Future<List<MovieVO>> getNowPlayingMovie(int page) {
-  //   return _dataAgent.getNowPlayingMovies(page).then((movies) async {
-  //     List<MovieVO> nowPlayingMovies = movies!.map((movie) {
-  //       movie.isNowPlaying = true;
-  //       movie.isPopular = false;
-  //       movie.isTopRated = false;
-  //       return movie;
-  //     }).toList();
-  //     movieDao.saveAllMovies(nowPlayingMovies);
-  //     return Future.value(movies);
-  //   });
-  // }
-  //
-  // @override
-  // Future<List<MovieVO>> getPopularMovies(int page) {
-  //   return _dataAgent.getPopularMovies(page).then((movies) async {
-  //     List<MovieVO> popularMovies = movies!.map((movie) {
-  //       movie.isNowPlaying = false;
-  //       movie.isPopular = true;
-  //       movie.isTopRated = false;
-  //       return movie;
-  //     }).toList();
-  //     movieDao.saveAllMovies(popularMovies);
-  //     return Future.value(movies);
-  //   });
-  // }
-  //
-  // @override
-  // Future<List<MovieVO>> getTopRatedMovies(int page) {
-  //   return _dataAgent.getTopRatedMovies(page).then((movies) async {
-  //     List<MovieVO> topRatedMovies = movies!.map((movie) {
-  //       movie.isNowPlaying = false;
-  //       movie.isPopular = false;
-  //       movie.isTopRated = true;
-  //       return movie;
-  //     }).toList();
-  //     movieDao.saveAllMovies(topRatedMovies);
-  //     return Future.value(movies);
-  //   });
-  // }
+  /// State
+  List<MovieVO>? nowPlayingMovies;
+  List<MovieVO>? popularMovies;
+  List<MovieVO>? topRatedMovies;
+  List<MovieVO>? movieByGenre;
+  List<GenreVO>? genres;
+  List<ActorVO>? actors;
 
+  /// Network
   @override
-  Future<List<MovieVO>?> getMovieByGenre(int genreId) {
-    return _dataAgent.getMovieByGenre(genreId);
+  void getMovieByGenre(int genreId) {
+    _dataAgent.getMovieByGenre(genreId).then((movieByGenreList) {
+      movieByGenre = movieByGenreList;
+      notifyListeners();
+    });
   }
 
   @override
-  Future<List<GenreVO>> getGenres() {
-    return _dataAgent.getGenres().then((genres) async {
-      genreDao.saveAllGenres(genres!);
-      return Future.value(genres);
+  void getGenres() {
+    _dataAgent.getGenres().then((genresList) async {
+      genreDao.saveAllGenres(genresList!);
+      genres = genresList;
+      getMovieByGenre(genresList.first.id ?? 1);
+      notifyListeners();
     });
   }
 
   @override
   Future<List<ActorVO>> getActors(int page) {
-    return _dataAgent.getActors(page).then((actors) async {
-      actorDao.saveAllActors(actors!);
-      return Future.value(actors);
+    return _dataAgent.getActors(page).then((actorsList) async {
+      actorDao.saveAllActors(actorsList!);
+      actors = actorsList;
+      notifyListeners();
+      return Future.value(actorsList);
     });
   }
 
@@ -101,15 +83,16 @@ class MovieModelImpl extends MovieModel {
   }
 
   /// from database
-
   @override
-  Future<List<ActorVO>> getActorsFromDatabase() {
-    return Future<List<ActorVO>>.value(actorDao.getAllActors());
+  void getActorsFromDatabase() {
+    actors = actorDao.getAllActors();
+    notifyListeners();
   }
 
   @override
-  Future<List<GenreVO>> getGenresFromDatabase() {
-    return Future<List<GenreVO>>.value(genreDao.getAllGenres());
+  void getGenresFromDatabase() {
+    genres = genreDao.getAllGenres();
+    notifyListeners();
   }
 
   @override
@@ -118,75 +101,93 @@ class MovieModelImpl extends MovieModel {
   }
 
   @override
-  Future<List<MovieVO>> getNowPlayingMovieFromDatabase() {
+  void getNowPlayingMovieFromDatabase() {
     getNowPlayingMovie(1);
-    return movieDao
+    movieDao
         .getAllMovieEventStream()
         // ignore: void_checks
         .startWith(movieDao.getNowPlayingMovieStream())
         .map((event) => movieDao.getAllMovies())
-        .first;
+        .first
+        .then((nowPlayingMoviesList) {
+      nowPlayingMovies = nowPlayingMoviesList;
+      notifyListeners();
+    });
   }
 
   @override
-  Future<List<MovieVO>> getPopularMoviesFromDatabase() {
+  void getPopularMoviesFromDatabase() {
     getPopularMovies(1);
-    return movieDao
+    movieDao
         .getAllMovieEventStream()
         // ignore: void_checks
         .startWith(movieDao.getPopularMovieStream())
         .map((event) => movieDao.getAllMovies())
-        .first;
+        .first
+        .then((popularMoviesList) {
+      popularMovies = popularMoviesList;
+      notifyListeners();
+    });
   }
 
   @override
-  Future<List<MovieVO>> getTopRatedMoviesFromDatabase() {
+  void getTopRatedMoviesFromDatabase() {
     getTopRatedMovies(1);
-    return movieDao
+    movieDao
         .getAllMovieEventStream()
         // ignore: void_checks
         .startWith(movieDao.getTopRatedMovieStream())
         .map((event) => movieDao.getAllMovies())
-        .first;
+        .first
+        .then((topRelatedMovies) {
+      topRatedMovies = topRelatedMovies;
+      notifyListeners();
+    });
   }
 
   /// reactive programming
   @override
   void getNowPlayingMovie(int page) {
     _dataAgent.getNowPlayingMovies(page).then((movies) async {
-      List<MovieVO> nowPlayingMovies = movies!.map((movie) {
+      List<MovieVO> nowPlayingMoviesList = movies!.map((movie) {
         movie.isNowPlaying = true;
         movie.isPopular = false;
         movie.isTopRated = false;
         return movie;
       }).toList();
-      movieDao.saveAllMovies(nowPlayingMovies);
+      movieDao.saveAllMovies(nowPlayingMoviesList);
+      nowPlayingMovies = nowPlayingMoviesList;
+      notifyListeners();
     });
   }
 
   @override
   void getPopularMovies(int page) {
     _dataAgent.getPopularMovies(page).then((movies) async {
-      List<MovieVO> popularMovies = movies!.map((movie) {
+      List<MovieVO> popularMoviesList = movies!.map((movie) {
         movie.isNowPlaying = false;
         movie.isPopular = true;
         movie.isTopRated = false;
         return movie;
       }).toList();
-      movieDao.saveAllMovies(popularMovies);
+      movieDao.saveAllMovies(popularMoviesList);
+      popularMovies = popularMoviesList;
+      notifyListeners();
     });
   }
 
   @override
   void getTopRatedMovies(int page) {
     _dataAgent.getTopRatedMovies(page).then((movies) async {
-      List<MovieVO> topRatedMovies = movies!.map((movie) {
+      List<MovieVO> topRatedMoviesList = movies!.map((movie) {
         movie.isNowPlaying = false;
         movie.isPopular = false;
         movie.isTopRated = true;
         return movie;
       }).toList();
-      movieDao.saveAllMovies(topRatedMovies);
+      movieDao.saveAllMovies(topRatedMoviesList);
+      topRatedMovies = topRatedMoviesList;
+      notifyListeners();
     });
   }
 }
