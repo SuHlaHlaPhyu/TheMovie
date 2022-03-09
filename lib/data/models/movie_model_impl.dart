@@ -47,10 +47,11 @@ class MovieModelImpl extends MovieModel {
 
   /// Network
   @override
-  void getMovieByGenre(int genreId) {
-    _dataAgent.getMovieByGenre(genreId).then((movieByGenreList) {
+  Future<List<MovieVO>> getMovieByGenre(int genreId) {
+    return _dataAgent.getMovieByGenre(genreId).then((movieByGenreList) {
       movieByGenre = movieByGenreList;
       notifyListeners();
+      return Future.value(movieByGenre);
     });
   }
 
@@ -93,15 +94,15 @@ class MovieModelImpl extends MovieModel {
 
   /// from database
   @override
-  void getActorsFromDatabase() {
-    actors = actorDao.getAllActors();
+  Future<List<ActorVO>> getActorsFromDatabase() {
     notifyListeners();
+    return Future.value(actors = actorDao.getAllActors());
   }
 
   @override
-  void getGenresFromDatabase() {
-    genres = genreDao.getAllGenres();
+  Future<List<GenreVO>> getGenresFromDatabase() {
     notifyListeners();
+    return Future.value(genres = genreDao.getAllGenres());
   }
 
   @override
@@ -111,9 +112,9 @@ class MovieModelImpl extends MovieModel {
   }
 
   @override
-  void getNowPlayingMovieFromDatabase() {
+  Future<List<MovieVO>> getNowPlayingMovieFromDatabase() {
     getNowPlayingMovie(1);
-    movieDao
+    return movieDao
         .getAllMovieEventStream()
         // ignore: void_checks
         .startWith(movieDao.getNowPlayingMovieStream())
@@ -122,13 +123,14 @@ class MovieModelImpl extends MovieModel {
         .then((nowPlayingMoviesList) {
       nowPlayingMovies = nowPlayingMoviesList;
       notifyListeners();
+      return Future.value(nowPlayingMovies);
     });
   }
 
   @override
-  void getPopularMoviesFromDatabase() {
+  Future<List<MovieVO>> getPopularMoviesFromDatabase() {
     getPopularMovies(1);
-    movieDao
+    return movieDao
         .getAllMovieEventStream()
         // ignore: void_checks
         .startWith(movieDao.getPopularMovieStream())
@@ -137,13 +139,14 @@ class MovieModelImpl extends MovieModel {
         .then((popularMoviesList) {
       popularMovies = popularMoviesList;
       notifyListeners();
+      return Future.value(popularMovies);
     });
   }
 
   @override
-  void getTopRatedMoviesFromDatabase() {
+  Future<List<MovieVO>> getTopRatedMoviesFromDatabase() {
     getTopRatedMovies(1);
-    movieDao
+    return movieDao
         .getAllMovieEventStream()
         // ignore: void_checks
         .startWith(movieDao.getTopRatedMovieStream())
@@ -152,6 +155,7 @@ class MovieModelImpl extends MovieModel {
         .then((topRelatedMovies) {
       topRatedMovies = topRelatedMovies;
       notifyListeners();
+      return Future.value(topRelatedMovies);
     });
   }
 

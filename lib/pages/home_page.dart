@@ -1,6 +1,8 @@
 import 'package:dots_indicator/dots_indicator.dart';
 import 'package:flutter/material.dart';
+import 'package:movie_app/blocs/home_bloc.dart';
 import 'package:movie_app/data/models/movie_model_impl.dart';
+import 'package:movie_app/data/vos/actor_vo.dart';
 import 'package:movie_app/data/vos/genre_vo.dart';
 import 'package:movie_app/data/vos/movie_vo.dart';
 import 'package:movie_app/pages/movie_details_page.dart';
@@ -16,7 +18,14 @@ import 'package:movie_app/widgets/title_text.dart';
 import 'package:movie_app/widgets/title_text_with_see_more_view.dart';
 import 'package:scoped_model/scoped_model.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  final HomeBloc _bloc = HomeBloc();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -52,24 +61,24 @@ class HomePage extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              ScopedModelDescendant<MovieModelImpl>(
-                builder: (BuildContext context, Widget? child,
-                    MovieModelImpl model) {
+              StreamBuilder<List<MovieVO>?>(
+                stream: _bloc.popularMoviesStreamController.stream,
+                builder: (context, snapshot) {
                   return BannerSectionView(
-                    popularMoviesList: model.popularMovies?.take(5).toList(),
+                    popularMoviesList: snapshot.data?.take(5).toList(),
                   );
                 },
               ),
               const SizedBox(
                 height: MARGIN_LARGE,
               ),
-              ScopedModelDescendant<MovieModelImpl>(
-                builder: (BuildContext context, Widget? child,
-                    MovieModelImpl model) {
+              StreamBuilder<List<MovieVO>?>(
+                stream: _bloc.nowPlayingMoviesStreamController.stream,
+                builder: (context, snapshot) {
                   return BestPopularMoviesAndSerialsView(
-                    onTapMovies: (movieId) => _navigateToMovieDetailScreen(
-                        context, movieId ?? 1, model),
-                    nowPlayingMovies: model.nowPlayingMovies,
+                    onTapMovies: (movieId) =>
+                        _navigateToMovieDetailScreen(context, movieId ?? 1),
+                    nowPlayingMovies: snapshot.data,
                   );
                 },
               ),
@@ -80,43 +89,49 @@ class HomePage extends StatelessWidget {
               const SizedBox(
                 height: MARGIN_LARGE,
               ),
-              ScopedModelDescendant<MovieModelImpl>(
-                builder: (BuildContext context, Widget? child,
-                    MovieModelImpl model) {
-                  return GenreSectionView(
-                    onChooseGenre: (genreId) {
-                      if (genreId != null) {
-                        model.getMovieByGenre(genreId);
+              StreamBuilder<List<GenreVO>?>(
+                  stream: _bloc.genresStreamController.stream,
+                  builder: (context, genreSnapshot) {
+                    return StreamBuilder<List<MovieVO>?>(
+                      stream: _bloc.movieByGenreStreamController.stream,
+                      builder: (context, snapshot) {
+                        return GenreSectionView(
+                          onChooseGenre: (genreId) {
+                            if (genreId != null) {
+                              _bloc.onTapGenre(genreId);
+                            }
+                          },
+                          movieByGenre: snapshot.data,
+                          onTapMovie: (movieId) => _navigateToMovieDetailScreen(
+                            context,
+                            movieId ?? 1,
+                          ),
+                          genreList: genreSnapshot.data,
+                        );
                       }
-                    },
-                    movieByGenre: model.movieByGenre,
-                    onTapMovie: (movieId) => _navigateToMovieDetailScreen(
-                        context, movieId ?? 1, model),
-                    genreList: model.genres,
-                  );
-                },
-              ),
+                    );
+                  }),
               const SizedBox(
                 height: MARGIN_LARGE,
               ),
-              ScopedModelDescendant<MovieModelImpl>(
-                builder: (BuildContext context, Widget? child,
-                    MovieModelImpl model) {
+              StreamBuilder<List<MovieVO>?>(
+                stream: _bloc.topRatedMoviesStreamController.stream,
+                builder: (context, snapshot) {
                   return ShowCasesSection(
-                    movieList: model.topRatedMovies,
+                    movieList: snapshot.data,
                   );
                 },
               ),
               const SizedBox(
                 height: MARGIN_LARGE,
               ),
-              ScopedModelDescendant<MovieModelImpl>(
-                builder: (BuildContext context, Widget? child,
-                    MovieModelImpl model) {
+              StreamBuilder<List<ActorVO>?>(
+                stream: _bloc.actorsStreamController.stream,
+                builder: (context, snapshot) {
                   return ActorsAndCreatorsSectionView(
                     BEST_ACTORS_TITLE,
                     BEST_ACOTRS_SEEMORE,
-                    actorList: model.actors,
+                    actorList: snapshot.data,
                   );
                 },
               ),
@@ -133,11 +148,7 @@ class HomePage extends StatelessWidget {
   void _navigateToMovieDetailScreen(
     BuildContext context,
     int movieId,
-    MovieModelImpl model,
   ) {
-    model.getMovieDetails(movieId);
-    model.getMovieDetailsFromDatabase(movieId);
-    model.getCreditByMovie(movieId);
     Navigator.push(
       context,
       MaterialPageRoute(
