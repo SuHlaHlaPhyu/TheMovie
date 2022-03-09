@@ -50,7 +50,7 @@ class MovieModelImpl extends MovieModel {
   Future<List<MovieVO>> getMovieByGenre(int genreId) {
     return _dataAgent.getMovieByGenre(genreId).then((movieByGenreList) {
       movieByGenre = movieByGenreList;
-      notifyListeners();
+      // notifyListeners();
       return Future.value(movieByGenre);
     });
   }
@@ -61,7 +61,7 @@ class MovieModelImpl extends MovieModel {
       genreDao.saveAllGenres(genresList!);
       genres = genresList;
       getMovieByGenre(genresList.first.id ?? 1);
-      notifyListeners();
+      // notifyListeners();
     });
   }
 
@@ -70,7 +70,7 @@ class MovieModelImpl extends MovieModel {
     _dataAgent.getActors(page).then((actorsList) async {
       actorDao.saveAllActors(actorsList!);
       actors = actorsList;
-      notifyListeners();
+      // notifyListeners();
     });
   }
 
@@ -79,7 +79,7 @@ class MovieModelImpl extends MovieModel {
     return _dataAgent.getCreditByMovie(movieId).then((castAndCrews) {
       casts = castAndCrews.first;
       crews = castAndCrews.last;
-      notifyListeners();
+      // notifyListeners();
       return Future.value(castAndCrews);
     });
   }
@@ -89,7 +89,7 @@ class MovieModelImpl extends MovieModel {
     return _dataAgent.getMovieDetails(movieId).then((movie) {
       movieDao.saveSingleMove(movie!);
       movieDetails = movie;
-      notifyListeners();
+      // notifyListeners();
       return Future.value(movieDetails);
     });
   }
@@ -97,19 +97,19 @@ class MovieModelImpl extends MovieModel {
   /// from database
   @override
   Future<List<ActorVO>> getActorsFromDatabase() {
-    notifyListeners();
+    // notifyListeners();
     return Future.value(actors = actorDao.getAllActors());
   }
 
   @override
   Future<List<GenreVO>> getGenresFromDatabase() {
-    notifyListeners();
+    // notifyListeners();
     return Future.value(genres = genreDao.getAllGenres());
   }
 
   @override
   Future<MovieVO> getMovieDetailsFromDatabase(int movieId) {
-    notifyListeners();
+    //  notifyListeners();
     return Future.value(movieDetails = movieDao.getMoveById(movieId));
   }
 
@@ -124,7 +124,7 @@ class MovieModelImpl extends MovieModel {
         .first
         .then((nowPlayingMoviesList) {
       nowPlayingMovies = nowPlayingMoviesList;
-      notifyListeners();
+      // notifyListeners();
       return Future.value(nowPlayingMovies);
     });
   }
@@ -140,7 +140,7 @@ class MovieModelImpl extends MovieModel {
         .first
         .then((popularMoviesList) {
       popularMovies = popularMoviesList;
-      notifyListeners();
+      //  notifyListeners();
       return Future.value(popularMovies);
     });
   }
@@ -156,7 +156,7 @@ class MovieModelImpl extends MovieModel {
         .first
         .then((topRelatedMovies) {
       topRatedMovies = topRelatedMovies;
-      notifyListeners();
+      // notifyListeners();
       return Future.value(topRelatedMovies);
     });
   }
@@ -173,7 +173,7 @@ class MovieModelImpl extends MovieModel {
       }).toList();
       movieDao.saveAllMovies(nowPlayingMoviesList);
       nowPlayingMovies = nowPlayingMoviesList;
-      notifyListeners();
+      //  notifyListeners();
     });
   }
 
@@ -188,7 +188,7 @@ class MovieModelImpl extends MovieModel {
       }).toList();
       movieDao.saveAllMovies(popularMoviesList);
       popularMovies = popularMoviesList;
-      notifyListeners();
+      //  notifyListeners();
     });
   }
 
@@ -203,7 +203,7 @@ class MovieModelImpl extends MovieModel {
       }).toList();
       movieDao.saveAllMovies(topRatedMoviesList);
       topRatedMovies = topRatedMoviesList;
-      notifyListeners();
+      // notifyListeners();
     });
   }
 }

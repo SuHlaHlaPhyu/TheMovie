@@ -1,9 +1,8 @@
 import 'package:movie_app/data/vos/actor_vo.dart';
 import 'package:movie_app/data/vos/genre_vo.dart';
 import 'package:movie_app/data/vos/movie_vo.dart';
-import 'package:scoped_model/scoped_model.dart';
 
-abstract class MovieModel extends Model {
+abstract class MovieModel{
   /// Network
   Future<List<MovieVO>> getMovieByGenre(int genreId);
   void getGenres();
