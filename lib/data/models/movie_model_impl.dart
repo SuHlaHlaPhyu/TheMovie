@@ -18,13 +18,13 @@ class MovieModelImpl extends MovieModel {
   }
 
   MovieModelImpl._internal() {
-    getNowPlayingMovieFromDatabase();
-    getTopRatedMoviesFromDatabase();
-    getPopularMoviesFromDatabase();
-    getActors(1);
-    getActorsFromDatabase();
-    getGenres();
-    getGenresFromDatabase();
+    // getNowPlayingMovieFromDatabase();
+    // getTopRatedMoviesFromDatabase();
+    // getPopularMoviesFromDatabase();
+    // getActors(1);
+    // getActorsFromDatabase();
+    // getGenres();
+    // getGenresFromDatabase();
   }
 
   /// Daos
@@ -75,20 +75,22 @@ class MovieModelImpl extends MovieModel {
   }
 
   @override
-  void getCreditByMovie(int movieId) {
-    _dataAgent.getCreditByMovie(movieId).then((castAndCrews) {
+  Future<List<List<ActorVO>?>> getCreditByMovie(int movieId) {
+    return _dataAgent.getCreditByMovie(movieId).then((castAndCrews) {
       casts = castAndCrews.first;
       crews = castAndCrews.last;
       notifyListeners();
+      return Future.value(castAndCrews);
     });
   }
 
   @override
-  void getMovieDetails(int movieId) {
-    _dataAgent.getMovieDetails(movieId).then((movie) {
+  Future<MovieVO> getMovieDetails(int movieId) {
+    return _dataAgent.getMovieDetails(movieId).then((movie) {
       movieDao.saveSingleMove(movie!);
       movieDetails = movie;
       notifyListeners();
+      return Future.value(movieDetails);
     });
   }
 
@@ -106,9 +108,9 @@ class MovieModelImpl extends MovieModel {
   }
 
   @override
-  void getMovieDetailsFromDatabase(int movieId) {
-    movieDetails = movieDao.getMoveById(movieId);
+  Future<MovieVO> getMovieDetailsFromDatabase(int movieId) {
     notifyListeners();
+    return Future.value(movieDetails = movieDao.getMoveById(movieId));
   }
 
   @override

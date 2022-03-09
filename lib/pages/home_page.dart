@@ -1,7 +1,6 @@
 import 'package:dots_indicator/dots_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:movie_app/blocs/home_bloc.dart';
-import 'package:movie_app/data/models/movie_model_impl.dart';
 import 'package:movie_app/data/vos/actor_vo.dart';
 import 'package:movie_app/data/vos/genre_vo.dart';
 import 'package:movie_app/data/vos/movie_vo.dart';
@@ -16,7 +15,6 @@ import 'package:movie_app/widgets/actors_and_creators_section_view.dart';
 import 'package:movie_app/widgets/see_more_text.dart';
 import 'package:movie_app/widgets/title_text.dart';
 import 'package:movie_app/widgets/title_text_with_see_more_view.dart';
-import 'package:scoped_model/scoped_model.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -25,6 +23,11 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final HomeBloc _bloc = HomeBloc();
+  @override
+  void dispose() {
+    _bloc.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -93,23 +96,23 @@ class _HomePageState extends State<HomePage> {
                   stream: _bloc.genresStreamController.stream,
                   builder: (context, genreSnapshot) {
                     return StreamBuilder<List<MovieVO>?>(
-                      stream: _bloc.movieByGenreStreamController.stream,
-                      builder: (context, snapshot) {
-                        return GenreSectionView(
-                          onChooseGenre: (genreId) {
-                            if (genreId != null) {
-                              _bloc.onTapGenre(genreId);
-                            }
-                          },
-                          movieByGenre: snapshot.data,
-                          onTapMovie: (movieId) => _navigateToMovieDetailScreen(
-                            context,
-                            movieId ?? 1,
-                          ),
-                          genreList: genreSnapshot.data,
-                        );
-                      }
-                    );
+                        stream: _bloc.movieByGenreStreamController.stream,
+                        builder: (context, snapshot) {
+                          return GenreSectionView(
+                            onChooseGenre: (genreId) {
+                              if (genreId != null) {
+                                _bloc.onTapGenre(genreId);
+                              }
+                            },
+                            movieByGenre: snapshot.data,
+                            onTapMovie: (movieId) =>
+                                _navigateToMovieDetailScreen(
+                              context,
+                              movieId ?? 1,
+                            ),
+                            genreList: genreSnapshot.data,
+                          );
+                        });
                   }),
               const SizedBox(
                 height: MARGIN_LARGE,
@@ -152,7 +155,9 @@ class _HomePageState extends State<HomePage> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => MovieDetailsPage(),
+        builder: (context) => MovieDetailsPage(
+          movieId,
+        ),
       ),
     );
   }
