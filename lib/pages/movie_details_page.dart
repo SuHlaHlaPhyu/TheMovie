@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:movie_app/blocs/movie_details_bloc.dart';
+import 'package:movie_app/data/vos/actor_vo.dart';
 import 'package:movie_app/data/vos/movie_vo.dart';
 import 'package:movie_app/network/api_constants.dart';
 import 'package:movie_app/resources/colors.dart';
@@ -19,15 +20,16 @@ class MovieDetailsPage extends StatelessWidget {
     return ChangeNotifierProvider(
       create: (BuildContext context) => MovieDetailsBloc(movieId),
       child: Scaffold(
-        body: Consumer<MovieDetailsBloc>(
-          builder: (BuildContext context, bloc, Widget? child) {
+        body: Selector<MovieDetailsBloc, MovieVO?>(
+          selector: (BuildContext context, bloc) => bloc.movieDetail,
+          builder: (BuildContext context, movieDetail, Widget? child) {
             return Container(
               color: HOME_SCREEN_BACKGROUND_COLOR,
               child: CustomScrollView(
                 slivers: [
                   MovieDetailsSilverAppbarView(
                     () => Navigator.pop(context),
-                    movie: bloc.movieDetail,
+                    movie: movieDetail,
                   ),
                   SliverList(
                     delegate: SliverChildListDelegate(
@@ -38,19 +40,24 @@ class MovieDetailsPage extends StatelessWidget {
                           ),
                           child: TrailerSection(
                             genreList:
-                                bloc.movieDetail?.getGenreListAsStringList() ??
-                                    [],
-                            storyLine: bloc.movieDetail?.overview ?? "",
+                                movieDetail?.getGenreListAsStringList() ?? [],
+                            storyLine: movieDetail?.overview ?? "",
                           ),
                         ),
                         const SizedBox(
                           height: MARGIN_LARGE,
                         ),
-                        ActorsAndCreatorsSectionView(
-                          MOVIE_DETAIL_SCREEN_ACTOR_TITLE,
-                          '',
-                          seeMoreButtonVisibility: false,
-                          actorList: bloc.casts,
+                        Selector<MovieDetailsBloc, List<ActorVO>?>(
+                          selector: (BuildContext context, bloc) => bloc.casts,
+                          builder:
+                              (BuildContext context, casts, Widget? child) {
+                            return ActorsAndCreatorsSectionView(
+                              MOVIE_DETAIL_SCREEN_ACTOR_TITLE,
+                              '',
+                              seeMoreButtonVisibility: false,
+                              actorList: casts,
+                            );
+                          },
                         ),
                         const SizedBox(
                           height: MARGIN_LARGE,
@@ -60,16 +67,22 @@ class MovieDetailsPage extends StatelessWidget {
                             horizontal: MARGIN_MEDIUM_2,
                           ),
                           child: AboutFilmSectionView(
-                            movie: bloc.movieDetail,
+                            movie: movieDetail,
                           ),
                         ),
                         const SizedBox(
                           height: MARGIN_LARGE,
                         ),
-                        ActorsAndCreatorsSectionView(
-                          MOVIE_DETAIL_SCREEN_CREATOR_TITLE,
-                          MOVIE_DETAIL_SCREEN_CREATOR_SEEMORE,
-                          actorList: bloc.crews,
+                        Selector<MovieDetailsBloc, List<ActorVO>?>(
+                          selector: (BuildContext context, bloc) => bloc.crews,
+                          builder:
+                              (BuildContext context, crews, Widget? child) {
+                            return ActorsAndCreatorsSectionView(
+                              MOVIE_DETAIL_SCREEN_CREATOR_TITLE,
+                              MOVIE_DETAIL_SCREEN_CREATOR_SEEMORE,
+                              actorList: crews,
+                            );
+                          },
                         ),
                       ],
                     ),
