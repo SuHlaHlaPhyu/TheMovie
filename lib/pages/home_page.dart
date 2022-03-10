@@ -1,7 +1,6 @@
 import 'package:dots_indicator/dots_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:movie_app/blocs/home_bloc.dart';
-import 'package:movie_app/data/vos/actor_vo.dart';
 import 'package:movie_app/data/vos/genre_vo.dart';
 import 'package:movie_app/data/vos/movie_vo.dart';
 import 'package:movie_app/pages/movie_details_page.dart';
@@ -15,133 +14,116 @@ import 'package:movie_app/widgets/actors_and_creators_section_view.dart';
 import 'package:movie_app/widgets/see_more_text.dart';
 import 'package:movie_app/widgets/title_text.dart';
 import 'package:movie_app/widgets/title_text_with_see_more_view.dart';
+import 'package:provider/provider.dart';
 
-class HomePage extends StatefulWidget {
-  @override
-  State<HomePage> createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> {
-  final HomeBloc _bloc = HomeBloc();
-  @override
-  void dispose() {
-    _bloc.dispose();
-    super.dispose();
-  }
-
+class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        backgroundColor: HOME_SCREEN_BACKGROUND_COLOR,
-        title: const Text(
-          MAIN_SCREEN_APPBAR_TITLE,
-          style: TextStyle(
-            fontWeight: FontWeight.w700,
-          ),
-        ),
-        leading: const Icon(
-          Icons.menu,
-        ),
-        actions: const [
-          Padding(
-            padding: EdgeInsets.only(
-              top: 0,
-              bottom: 0,
-              left: 0,
-              right: MARGIN_MEDIUM_2,
-            ),
-            child: Icon(
-              Icons.search,
+    return ChangeNotifierProvider(
+      create: (context) => HomeBloc(),
+      child: Scaffold(
+        appBar: AppBar(
+          centerTitle: true,
+          backgroundColor: HOME_SCREEN_BACKGROUND_COLOR,
+          title: const Text(
+            MAIN_SCREEN_APPBAR_TITLE,
+            style: TextStyle(
+              fontWeight: FontWeight.w700,
             ),
           ),
-        ],
-      ),
-      body: Container(
-        color: HOME_SCREEN_BACKGROUND_COLOR,
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              StreamBuilder<List<MovieVO>?>(
-                stream: _bloc.popularMoviesStreamController.stream,
-                builder: (context, snapshot) {
-                  return BannerSectionView(
-                    popularMoviesList: snapshot.data?.take(5).toList(),
-                  );
-                },
+          leading: const Icon(
+            Icons.menu,
+          ),
+          actions: const [
+            Padding(
+              padding: EdgeInsets.only(
+                top: 0,
+                bottom: 0,
+                left: 0,
+                right: MARGIN_MEDIUM_2,
               ),
-              const SizedBox(
-                height: MARGIN_LARGE,
+              child: Icon(
+                Icons.search,
               ),
-              StreamBuilder<List<MovieVO>?>(
-                stream: _bloc.nowPlayingMoviesStreamController.stream,
-                builder: (context, snapshot) {
-                  return BestPopularMoviesAndSerialsView(
-                    onTapMovies: (movieId) =>
-                        _navigateToMovieDetailScreen(context, movieId ?? 1),
-                    nowPlayingMovies: snapshot.data,
-                  );
-                },
-              ),
-              const SizedBox(
-                height: MARGIN_LARGE,
-              ),
-              CheckMovieShowTimeSectionView(),
-              const SizedBox(
-                height: MARGIN_LARGE,
-              ),
-              StreamBuilder<List<GenreVO>?>(
-                  stream: _bloc.genresStreamController.stream,
-                  builder: (context, genreSnapshot) {
-                    return StreamBuilder<List<MovieVO>?>(
-                        stream: _bloc.movieByGenreStreamController.stream,
-                        builder: (context, snapshot) {
-                          return GenreSectionView(
-                            onChooseGenre: (genreId) {
-                              if (genreId != null) {
-                                _bloc.onTapGenre(genreId);
-                              }
-                            },
-                            movieByGenre: snapshot.data,
-                            onTapMovie: (movieId) =>
-                                _navigateToMovieDetailScreen(
-                              context,
-                              movieId ?? 1,
-                            ),
-                            genreList: genreSnapshot.data,
-                          );
-                        });
-                  }),
-              const SizedBox(
-                height: MARGIN_LARGE,
-              ),
-              StreamBuilder<List<MovieVO>?>(
-                stream: _bloc.topRatedMoviesStreamController.stream,
-                builder: (context, snapshot) {
-                  return ShowCasesSection(
-                    movieList: snapshot.data,
-                  );
-                },
-              ),
-              const SizedBox(
-                height: MARGIN_LARGE,
-              ),
-              StreamBuilder<List<ActorVO>?>(
-                stream: _bloc.actorsStreamController.stream,
-                builder: (context, snapshot) {
-                  return ActorsAndCreatorsSectionView(
-                    BEST_ACTORS_TITLE,
-                    BEST_ACOTRS_SEEMORE,
-                    actorList: snapshot.data,
-                  );
-                },
-              ),
-              const SizedBox(
-                height: MARGIN_LARGE,
-              ),
-            ],
+            ),
+          ],
+        ),
+        body: Container(
+          color: HOME_SCREEN_BACKGROUND_COLOR,
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Consumer<HomeBloc>(
+                  builder: (BuildContext context, bloc, Widget? child) {
+                    return BannerSectionView(
+                      popularMoviesList: bloc.popularMovies?.take(5).toList(),
+                    );
+                  },
+                ),
+                const SizedBox(
+                  height: MARGIN_LARGE,
+                ),
+                Consumer<HomeBloc>(
+                  builder: (BuildContext context, bloc, Widget? child) {
+                    return BestPopularMoviesAndSerialsView(
+                      onTapMovies: (movieId) =>
+                          _navigateToMovieDetailScreen(context, movieId ?? 1),
+                      nowPlayingMovies: bloc.nowPlayingMovies,
+                    );
+                  },
+                ),
+                const SizedBox(
+                  height: MARGIN_LARGE,
+                ),
+                CheckMovieShowTimeSectionView(),
+                const SizedBox(
+                  height: MARGIN_LARGE,
+                ),
+                Consumer<HomeBloc>(
+                  builder: (BuildContext context, bloc, Widget? child) {
+                    return GenreSectionView(
+                      onChooseGenre: (genreId) {
+                        if (genreId != null) {
+                          bloc.onTapGenre(genreId);
+                        }
+                      },
+                      movieByGenre: bloc.movieByGenre,
+                      onTapMovie: (movieId) => _navigateToMovieDetailScreen(
+                        context,
+                        movieId ?? 1,
+                      ),
+                      genreList: bloc.genres,
+                    );
+                  },
+                ),
+                const SizedBox(
+                  height: MARGIN_LARGE,
+                ),
+                Consumer<HomeBloc>(
+                  builder: (BuildContext context, bloc, Widget? child) {
+                    return ShowCasesSection(
+                      movieList: bloc.topRatedMovies,
+                    );
+                  },
+                ),
+                const SizedBox(
+                  height: MARGIN_LARGE,
+                ),
+                Consumer<HomeBloc>(
+                  builder: (BuildContext context, bloc, Widget? child) {
+                    return ActorsAndCreatorsSectionView(
+                      BEST_ACTORS_TITLE,
+                      BEST_ACOTRS_SEEMORE,
+                      actorList: bloc.actors,
+                    );
+                  },
+                ),
+                const SizedBox(
+                  height: MARGIN_LARGE,
+                ),
+              ],
+            ),
           ),
         ),
       ),

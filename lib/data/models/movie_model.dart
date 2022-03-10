@@ -5,7 +5,7 @@ import 'package:movie_app/data/vos/movie_vo.dart';
 abstract class MovieModel{
   /// Network
   Future<List<MovieVO>> getMovieByGenre(int genreId);
-  void getGenres();
+  Future<List<GenreVO>> getGenres();
   void getActors(int page);
   Future<MovieVO> getMovieDetails(int movieId);
   //void getCreditByMovie(int movieId);
