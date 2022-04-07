@@ -6,6 +6,9 @@ import 'package:movie_app/network/movie_data_agent.dart';
 import 'package:movie_app/network/retrofit_data_agent_impl.dart';
 import 'package:movie_app/persistence/daos/actor_dao.dart';
 import 'package:movie_app/persistence/daos/genre_dao.dart';
+import 'package:movie_app/persistence/daos/impl/actor_dao_impl.dart';
+import 'package:movie_app/persistence/daos/impl/genre_dao_impl.dart';
+import 'package:movie_app/persistence/daos/impl/movie_dao_impl.dart';
 import 'package:movie_app/persistence/daos/movie_dao.dart';
 import 'package:stream_transform/stream_transform.dart';
 
@@ -20,9 +23,21 @@ class MovieModelImpl extends MovieModel {
   MovieModelImpl._internal();
 
   /// Daos
-  ActorDao actorDao = ActorDao();
-  GenreDao genreDao = GenreDao();
-  MovieDao movieDao = MovieDao();
+  ActorDao actorDao = ActorDaoImpl();
+  GenreDao genreDao = GenreDaoImpl();
+  MovieDao movieDao = MovieDaoImpl();
+
+  /// for testing purpose
+  void setDaosAndDataAgents(
+    MovieDao movieDaoTest,
+    ActorDao actorDaoTest,
+    GenreDao genreDaoTest,
+    MovieDataAgent movieDataAgentTest,
+  ) {
+    actorDao = actorDaoTest;
+    genreDao = genreDaoTest;
+    movieDao = movieDaoTest;
+  }
 
   /// home page State
   List<MovieVO>? nowPlayingMovies;
@@ -112,6 +127,15 @@ class MovieModelImpl extends MovieModel {
       return Future.value(nowPlayingMovies);
     });
   }
+  // @override
+  // Stream<List<MovieVO>> getNowPlayingMovieFromDatabase() {
+  //   getNowPlayingMovie(1);
+  //   return movieDao
+  //       .getAllMovieEventStream()
+  //       .startWith(movieDao.getNowPlayingMovieStream())
+  //       .map((event) => movieDao.getAllMovies());
+  //
+  // }
 
   @override
   Future<List<MovieVO>> getPopularMoviesFromDatabase() {

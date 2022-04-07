@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:movie_app/data/models/movie_model_impl.dart';
 
@@ -15,6 +14,9 @@ class HomeBloc extends ChangeNotifier {
   List<MovieVO>? movieByGenre;
   List<GenreVO>? genres;
   List<ActorVO>? actors;
+
+  /// page
+  int pageForNowPlayingMovie = 1;
 
   /// model
   MovieModel movieModel = MovieModelImpl();
@@ -74,5 +76,10 @@ class HomeBloc extends ChangeNotifier {
       movieByGenre = movieByGenreList;
       notifyListeners();
     }).catchError((error) {});
+  }
+
+  void onNowPlayingMovieListEndReached() {
+    pageForNowPlayingMovie += 1;
+    movieModel.getNowPlayingMovie(pageForNowPlayingMovie);
   }
 }

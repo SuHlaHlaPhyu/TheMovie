@@ -9,6 +9,7 @@ import 'package:movie_app/resources/strings.dart';
 import 'package:movie_app/widgets/actors_and_creators_section_view.dart';
 import 'package:movie_app/widgets/gradient_view.dart';
 import 'package:movie_app/widgets/rating_view.dart';
+import 'package:movie_app/widgets/title_and_horizontal_movie_list_view.dart';
 import 'package:movie_app/widgets/title_text.dart';
 import 'package:provider/provider.dart';
 
@@ -84,6 +85,28 @@ class MovieDetailsPage extends StatelessWidget {
                             );
                           },
                         ),
+                        const SizedBox(
+                          height: MARGIN_LARGE,
+                        ),
+                        Selector<MovieDetailsBloc, List<MovieVO>?>(
+                            selector: (BuildContext context, bloc) =>
+                                bloc.mRelatedMovies,
+                            builder: (BuildContext context, mRelatedMovies,
+                                Widget? child) {
+                              return TitleAndHorizontalMovieListView(
+                                label: RELATED_MOVIES,
+                                onTapMovies: (movieId) =>
+                                    _navigateToMovieDetailScreen(
+                                        context, movieId ?? 1),
+                                nowPlayingMovies: mRelatedMovies,
+                                onListEndReach: () {
+                                  MovieDetailsBloc bloc =
+                                      Provider.of<MovieDetailsBloc>(context,
+                                          listen: false);
+                                  bloc.getRelatedMovie(movieId);
+                                },
+                              );
+                            })
                       ],
                     ),
                   )
@@ -91,6 +114,20 @@ class MovieDetailsPage extends StatelessWidget {
               ),
             );
           },
+        ),
+      ),
+    );
+  }
+
+  void _navigateToMovieDetailScreen(
+    BuildContext context,
+    int movieId,
+  ) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => MovieDetailsPage(
+          movieId,
         ),
       ),
     );
