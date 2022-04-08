@@ -3,7 +3,7 @@ import 'package:movie_app/data/vos/movie_vo.dart';
 import 'package:movie_app/persistence/daos/movie_dao.dart';
 import 'package:movie_app/persistence/hive_constance.dart';
 
-class MovieDaoImpl extends MovieDao{
+class MovieDaoImpl extends MovieDao {
   static final MovieDaoImpl _singleton = MovieDaoImpl._internal();
 
   factory MovieDaoImpl() {
@@ -53,8 +53,9 @@ class MovieDaoImpl extends MovieDao{
 
   @override
   Stream<List<MovieVO>> getPopularMovieStream() {
-    return Stream.value(
-        getAllMovies().where((element) => element.isPopular ?? false).toList());
+    return Stream.value(getAllMovies()
+        .where((element) => element.isPopular ?? false)
+        .toList());
   }
 
   @override
@@ -62,5 +63,38 @@ class MovieDaoImpl extends MovieDao{
     return Stream.value(getAllMovies()
         .where((element) => element.isTopRated ?? false)
         .toList());
+  }
+
+  @override
+  List<MovieVO> getPopularMovies() {
+    if (getAllMovies().isNotEmpty) {
+      return getAllMovies()
+          .where((element) => element.isPopular ?? false)
+          .toList();
+    } else {
+      return [];
+    }
+  }
+
+  @override
+  List<MovieVO> getTopRatedMovies() {
+    if (getAllMovies().isNotEmpty) {
+      return getAllMovies()
+          .where((element) => element.isTopRated ?? false)
+          .toList();
+    } else {
+      return [];
+    }
+  }
+
+  @override
+  List<MovieVO> getNowPlayingMovies() {
+    if (getAllMovies().isNotEmpty) {
+      return getAllMovies()
+          .where((element) => element.isTopRated ?? false)
+          .toList();
+    } else {
+      return [];
+    }
   }
 }

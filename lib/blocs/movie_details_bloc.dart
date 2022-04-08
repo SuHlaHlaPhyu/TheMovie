@@ -18,7 +18,7 @@ class MovieDetailsBloc extends ChangeNotifier {
     /// Movie details
     movieModel.getMovieDetails(movieId).then((movie) {
       movieDetail = movie;
-      getRelatedMovie(movie.genres?.first.id ?? 0);
+      getRelatedMovie(movie?.genres?.first.id ?? 0);
       notifyListeners();
     }).catchError((error) {});
 

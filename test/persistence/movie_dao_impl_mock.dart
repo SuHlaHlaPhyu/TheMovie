@@ -57,4 +57,31 @@ class MovieDaoImplMock extends MovieDao {
       moviesInDatabaseMock [movie.id] = movie;
     }
   }
+
+  @override
+  List<MovieVO> getNowPlayingMovies() {
+    if(getMockMovieForTest().isNotEmpty){
+      return getMockMovieForTest().where((element) => element.isNowPlaying ?? false).toList();
+    }else {
+      return [];
+    }
+  }
+
+  @override
+  List<MovieVO> getPopularMovies() {
+    if(getMockMovieForTest().isNotEmpty){
+      return getMockMovieForTest().where((element) => element.isPopular ?? false).toList();
+    }else {
+      return [];
+    }
+  }
+
+  @override
+  List<MovieVO> getTopRatedMovies() {
+    if(getMockMovieForTest().isNotEmpty){
+      return getMockMovieForTest().where((element) => element.isTopRated ?? false).toList();
+    }else {
+      return [];
+    }
+  }
 }

@@ -9,4 +9,7 @@ abstract class MovieDao {
   Stream<List<MovieVO>> getNowPlayingMovieStream();
   Stream<List<MovieVO>> getPopularMovieStream();
   Stream<List<MovieVO>> getTopRatedMovieStream();
+  List<MovieVO> getPopularMovies();
+  List<MovieVO> getTopRatedMovies();
+  List<MovieVO> getNowPlayingMovies();
 }

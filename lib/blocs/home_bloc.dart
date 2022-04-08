@@ -23,31 +23,31 @@ class HomeBloc extends ChangeNotifier {
 
   HomeBloc() {
     /// Now playing movies
-    movieModel.getNowPlayingMovieFromDatabase().then((movieList) {
+    movieModel.getNowPlayingMovieFromDatabase().listen((movieList) {
       nowPlayingMovies = movieList;
       notifyListeners();
-    }).catchError((error) {});
+    }).onError((error) {});
 
     /// Popular movies
-    movieModel.getPopularMoviesFromDatabase().then((movieList) {
+    movieModel.getPopularMoviesFromDatabase().listen((movieList) {
       popularMovies = movieList;
       notifyListeners();
-    }).catchError((error) {});
+    }).onError((error) {});
 
     /// top rated moves
-    movieModel.getTopRatedMoviesFromDatabase().then((movieList) {
+    movieModel.getTopRatedMoviesFromDatabase().listen((movieList) {
       topRatedMovies = movieList;
       notifyListeners();
-    }).then((error) {});
+    }).onError((error) {});
 
     /// actor list
-    movieModel.getActorsFromDatabase().then((actorList) {
+    movieModel.getActorsFromDatabase()?.then((actorList) {
       actors = actorList;
       notifyListeners();
     }).catchError((error) {});
 
     /// genre list
-    movieModel.getGenres().then((genreList) {
+    movieModel.getGenres()!.then((genreList) {
       genres = genreList;
       notifyListeners();
 
