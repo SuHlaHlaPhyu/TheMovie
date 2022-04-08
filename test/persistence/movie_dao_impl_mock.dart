@@ -54,7 +54,7 @@ class MovieDaoImplMock extends MovieDao {
   @override
   void saveSingleMove(MovieVO movie) {
     if( movie != null){
-      moviesInDatabaseMock [movie.id] = movie;
+      moviesInDatabaseMock[movie.id] = movie;
     }
   }
 

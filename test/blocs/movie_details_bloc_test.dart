@@ -9,7 +9,7 @@ void main(){
     MovieDetailsBloc? movieDetailsBloc;
 
     setUp((){
-      movieDetailsBloc = MovieDetailsBloc(1,MovieModelImplMock());
+      movieDetailsBloc = MovieDetailsBloc(464052,MovieModelImplMock());
     });
     
     test("Fetch movie detail test", (){
@@ -17,11 +17,11 @@ void main(){
     });
 
     test("Fetch creators test", (){
-      expect(movieDetailsBloc?.crews?.contains(getMockActorForTest()[1]), true);
+      expect(movieDetailsBloc?.crews?.contains(getMockCreditForTest().last), true);
     });
 
     test("Fetch actor test", (){
-      expect(movieDetailsBloc?.casts?.contains(getMockActorForTest().first), true);
+      expect(movieDetailsBloc?.casts?.contains(getMockCreditForTest().first), true);
     });
   });
 }

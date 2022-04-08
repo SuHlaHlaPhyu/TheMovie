@@ -21,7 +21,9 @@ void main() {
       );
     });
 
-    test("Saving now playing movies and getting now playing movies form database", () {
+    test(
+        "Saving now playing movies and getting now playing movies form database",
+        () {
       expect(
         movieModel.getNowPlayingMovieFromDatabase(),
         emits([
@@ -150,26 +152,36 @@ void main() {
       );
     });
 
-    test("Get Actors Test", () {
+    test("Get Genres from database Test", () async {
+      await movieModel.getGenres();
       expect(
-        movieModel.getActors(1),
+        movieModel.getGenresFromDatabase(),
         completion(
           equals(
-            getMockActorForTest().first,
+            getMockGenreForTest(),
           ),
         ),
       );
     });
 
-    test("Get Actors from database Test", ()
-    async
-    {
+    test("Get Actors Test", () {
+      expect(
+        movieModel.getActors(1),
+        completion(
+          equals(
+            getMockActorForTest(),
+          ),
+        ),
+      );
+    });
+
+    test("Get Actors from database Test", () async {
       await movieModel.getActors(1);
       expect(
         movieModel.getActorsFromDatabase(),
         completion(
           equals(
-            getMockActorForTest().first,
+            getMockActorForTest(),
           ),
         ),
       );
@@ -177,10 +189,10 @@ void main() {
 
     test("Get Credits Test", () {
       expect(
-        movieModel.getCreditByMovie(508947),
+        movieModel.getCreditByMovie(464052),
         completion(
           equals(
-           [ getMockActorForTest().first],
+            [getMockCreditForTest().first],
           ),
         ),
       );
@@ -197,29 +209,13 @@ void main() {
       );
     });
 
-    test("Get Movie details from database Test", ()
-     async
-    {
+    test("Get Movie details from database Test", () async {
       await movieModel.getMovieDetails(508947);
       expect(
         movieModel.getMovieDetailsFromDatabase(508947),
         completion(
           equals(
             getMockMovieForTest().first,
-          ),
-        ),
-      );
-    });
-
-    test("Get Genres from database Test", ()
-     async
-    {
-       await movieModel.getGenres();
-      expect(
-        movieModel.getGenresFromDatabase(),
-        completion(
-          equals(
-            getMockGenreForTest(),
           ),
         ),
       );

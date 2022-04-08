@@ -13,7 +13,7 @@ import 'package:movie_app/persistence/daos/movie_dao.dart';
 import 'package:stream_transform/stream_transform.dart';
 
 class MovieModelImpl extends MovieModel {
-  final MovieDataAgent _dataAgent = RetrofitDataAgentImpl();
+  MovieDataAgent dataAgent = RetrofitDataAgentImpl();
 
   static final MovieModelImpl _singleton = MovieModelImpl._internal();
   factory MovieModelImpl() {
@@ -37,6 +37,7 @@ class MovieModelImpl extends MovieModel {
     actorDao = actorDaoTest;
     genreDao = genreDaoTest;
     movieDao = movieDaoTest;
+    dataAgent = movieDataAgentTest;
   }
 
   /// home page State
@@ -55,7 +56,7 @@ class MovieModelImpl extends MovieModel {
   /// Network
   @override
   Future<List<MovieVO>?> getMovieByGenre(int genreId) {
-    return _dataAgent.getMovieByGenre(genreId).then((movieByGenreList) {
+    return dataAgent.getMovieByGenre(genreId).then((movieByGenreList) {
       movieByGenre = movieByGenreList;
       return Future.value(movieByGenre);
     });
@@ -63,16 +64,15 @@ class MovieModelImpl extends MovieModel {
 
   @override
   Future<List<GenreVO>?> getGenres() {
-    return _dataAgent.getGenres().then((genreList) async {
+    return dataAgent.getGenres().then((genreList) async {
       genreDao.saveAllGenres(genreList ?? []);
-      print("genre list ==============> $genreList");
       return Future.value(genreList);
     });
   }
 
   @override
   Future<List<ActorVO>?>? getActors(int page) {
-    return _dataAgent.getActors(1).then((actorList) async {
+    return dataAgent.getActors(1).then((actorList) async {
       actorDao.saveAllActors(actorList ?? []);
       return Future.value(actorList);
     });
@@ -80,7 +80,7 @@ class MovieModelImpl extends MovieModel {
 
   @override
   Future<List<List<ActorVO>?>> getCreditByMovie(int movieId) {
-    return _dataAgent.getCreditByMovie(movieId).then((castAndCrews) {
+    return dataAgent.getCreditByMovie(movieId).then((castAndCrews) {
       casts = castAndCrews.first;
       crews = castAndCrews.last;
       return Future.value(castAndCrews);
@@ -89,7 +89,7 @@ class MovieModelImpl extends MovieModel {
 
   @override
   Future<MovieVO> getMovieDetails(int movieId) {
-    return _dataAgent.getMovieDetails(movieId).then((movie) {
+    return dataAgent.getMovieDetails(movieId).then((movie) {
       movieDao.saveSingleMove(movie!);
       movieDetails = movie;
       return Future.value(movieDetails);
@@ -99,7 +99,6 @@ class MovieModelImpl extends MovieModel {
   /// from database
   @override
   Future<List<ActorVO>?>? getActorsFromDatabase() {
-    print("actor ============> ${actorDao.getAllActors()}");
     return Future.value(actors = actorDao.getAllActors());
   }
 
@@ -196,7 +195,7 @@ class MovieModelImpl extends MovieModel {
   /// reactive programming
   @override
   void getNowPlayingMovie(int page) {
-    _dataAgent.getNowPlayingMovies(page).then((movies) async {
+    dataAgent.getNowPlayingMovies(page).then((movies) async {
       List<MovieVO> nowPlayingMoviesList = movies!.map((movie) {
         movie.isNowPlaying = true;
         movie.isPopular = false;
@@ -210,7 +209,7 @@ class MovieModelImpl extends MovieModel {
 
   @override
   void getPopularMovies(int page) {
-    _dataAgent.getPopularMovies(page).then((movies) async {
+    dataAgent.getPopularMovies(page).then((movies) async {
       List<MovieVO> popularMoviesList = movies!.map((movie) {
         movie.isNowPlaying = false;
         movie.isPopular = true;
@@ -224,7 +223,7 @@ class MovieModelImpl extends MovieModel {
 
   @override
   void getTopRatedMovies(int page) {
-    _dataAgent.getTopRatedMovies(page).then((movies) async {
+    dataAgent.getTopRatedMovies(page).then((movies) async {
       List<MovieVO> topRatedMoviesList = movies!.map((movie) {
         movie.isNowPlaying = false;
         movie.isPopular = false;

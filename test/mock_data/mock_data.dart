@@ -103,9 +103,7 @@ List<ActorVO> getMockActorForTest() {
       false,
       1,
       224513,
-      [
-        getMockMovieForTest().first,
-      ],
+      [],
       "Acting",
       "Ana de Armas",
       107.821,
@@ -170,5 +168,55 @@ List<GenreVO> getMockGenreForTest() {
     GenreVO(53, "Thriller"),
     GenreVO(10752, "War"),
     GenreVO(37, "Western"),
+  ];
+}
+
+List<ActorVO> getMockCreditForTest() {
+  return [
+    ActorVO(
+      false,
+      1,
+      90633,
+      null,
+      "Acting",
+      "Gal Gadot",
+      44.578,
+      "/plLfB60M5cJrnog8KvAKhI4UJuk.jpg",
+      "Gal Gadot",
+      0,
+      "Diana Prince / Wonder Woman",
+      "595686e4c3a368382e050da4",
+      0,
+    ),
+    ActorVO(
+      false,
+      2,
+      62064,
+      null,
+      "Acting",
+      "Chris Pine",
+      24.407,
+      "/ipG3BMO8Ckv9xVeEY27lzq975Qm.jpg",
+      "Chris Pine",
+      15,
+      "Steve Trevor",
+      "5b0b4526c3a3684adc0097a5",
+      1,
+    ),
+    ActorVO(
+      false,
+      1,
+      1113,
+      null,
+      "Production",
+      "Lucinda Syson",
+      2.432,
+      null,
+      "Lucinda Syson",
+      null,
+      null,
+      "5c726ac6c3a3685a32151706",
+      null,
+    ),
   ];
 }
