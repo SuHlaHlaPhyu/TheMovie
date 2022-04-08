@@ -65,13 +65,17 @@ class MovieModelImpl extends MovieModel {
   Future<List<GenreVO>?> getGenres() {
     return _dataAgent.getGenres().then((genreList) async {
       genreDao.saveAllGenres(genreList ?? []);
+      print("genre list ==============> $genreList");
       return Future.value(genreList);
     });
   }
 
   @override
   Future<List<ActorVO>?>? getActors(int page) {
-    return Future.value(actorDao.getAllActors());
+    return _dataAgent.getActors(1).then((actorList) async {
+      actorDao.saveAllActors(actorList ?? []);
+      return Future.value(actorList);
+    });
   }
 
   @override
@@ -94,7 +98,8 @@ class MovieModelImpl extends MovieModel {
 
   /// from database
   @override
-  Future<List<ActorVO>?> getActorsFromDatabase() {
+  Future<List<ActorVO>?>? getActorsFromDatabase() {
+    print("actor ============> ${actorDao.getAllActors()}");
     return Future.value(actors = actorDao.getAllActors());
   }
 

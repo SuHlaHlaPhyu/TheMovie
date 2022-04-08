@@ -81,6 +81,41 @@ class ActorVO {
   Map<String, dynamic> toJson() => _$ActorVOToJson(this);
 
   @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is ActorVO &&
+          runtimeType == other.runtimeType &&
+          adult == other.adult &&
+          gender == other.gender &&
+          id == other.id &&
+          knownFor == other.knownFor &&
+          knownForDepartment == other.knownForDepartment &&
+          name == other.name &&
+          popularity == other.popularity &&
+          profilePath == other.profilePath &&
+          originalName == other.originalName &&
+          castId == other.castId &&
+          character == other.character &&
+          creditId == other.creditId &&
+          order == other.order;
+
+  @override
+  int get hashCode =>
+      adult.hashCode ^
+      gender.hashCode ^
+      id.hashCode ^
+      knownFor.hashCode ^
+      knownForDepartment.hashCode ^
+      name.hashCode ^
+      popularity.hashCode ^
+      profilePath.hashCode ^
+      originalName.hashCode ^
+      castId.hashCode ^
+      character.hashCode ^
+      creditId.hashCode ^
+      order.hashCode;
+
+  @override
   String toString() {
     return 'ActorVO{adult: $adult, gender: $gender, id: $id, knownFor: $knownFor, knownForDepartment: $knownForDepartment, name: $name, popularity: $popularity, profilePath: $profilePath, originalName: $originalName, castId: $castId, character: $character, creditId: $creditId, order: $order}';
   }

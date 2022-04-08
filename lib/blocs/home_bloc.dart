@@ -29,7 +29,11 @@ class HomeBloc extends ChangeNotifier {
     /// Now playing movies
     movieModel.getNowPlayingMovieFromDatabase().listen((movieList) {
       nowPlayingMovies = movieList;
+      // if(nowPlayingMovies?.isNotEmpty ?? false){
+      //   nowPlayingMovies?.sort((a,b) => a.id! - b.id!);
+      // }
       notifyListeners();
+      print("========> $nowPlayingMovies");
     }).onError((error) {});
 
     /// Popular movies
@@ -45,7 +49,7 @@ class HomeBloc extends ChangeNotifier {
     }).onError((error) {});
 
     /// actor list
-    movieModel.getActorsFromDatabase().then((actorList) {
+    movieModel.getActorsFromDatabase()?.then((actorList) {
       actors = actorList;
       notifyListeners();
     }).catchError((error) {});

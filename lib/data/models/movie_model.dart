@@ -16,7 +16,7 @@ abstract class MovieModel{
   Stream<List<MovieVO>?> getPopularMoviesFromDatabase();
   Stream<List<MovieVO>?> getTopRatedMoviesFromDatabase();
   Future<List<GenreVO>?> getGenresFromDatabase();
-  Future<List<ActorVO>?> getActorsFromDatabase();
+  Future<List<ActorVO>?>? getActorsFromDatabase();
   Future<MovieVO?> getMovieDetailsFromDatabase(int movieId);
 
   /// Reactive programming

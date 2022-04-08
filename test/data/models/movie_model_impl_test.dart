@@ -152,32 +152,10 @@ void main() {
 
     test("Get Actors Test", () {
       expect(
-        movieModel.getActorsFromDatabase(),
+        movieModel.getActors(1),
         completion(
           equals(
-            getMockActorForTest(),
-          ),
-        ),
-      );
-    });
-
-    test("Get Credits Test", () {
-      expect(
-        movieModel.getCreditByMovie(1),
-        completion(
-          equals(
-           [ getMockActorForTest()],
-          ),
-        ),
-      );
-    });
-
-    test("Get Movie Details Test", () {
-      expect(
-        movieModel.getMovieDetails(1),
-        completion(
-          equals(
-            getMockMovieForTest().first,
+            getMockActorForTest().first,
           ),
         ),
       );
@@ -191,7 +169,29 @@ void main() {
         movieModel.getActorsFromDatabase(),
         completion(
           equals(
-            getMockActorForTest(),
+            getMockActorForTest().first,
+          ),
+        ),
+      );
+    });
+
+    test("Get Credits Test", () {
+      expect(
+        movieModel.getCreditByMovie(508947),
+        completion(
+          equals(
+           [ getMockActorForTest().first],
+          ),
+        ),
+      );
+    });
+
+    test("Get Movie Details Test", () {
+      expect(
+        movieModel.getMovieDetails(508947),
+        completion(
+          equals(
+            getMockMovieForTest().first,
           ),
         ),
       );
@@ -200,9 +200,9 @@ void main() {
     test("Get Movie details from database Test", ()
      async
     {
-      await movieModel.getMovieDetails(1);
+      await movieModel.getMovieDetails(508947);
       expect(
-        movieModel.getMovieDetailsFromDatabase(1),
+        movieModel.getMovieDetailsFromDatabase(508947),
         completion(
           equals(
             getMockMovieForTest().first,
