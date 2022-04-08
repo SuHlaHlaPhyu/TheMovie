@@ -21,7 +21,11 @@ class HomeBloc extends ChangeNotifier {
   /// model
   MovieModel movieModel = MovieModelImpl();
 
-  HomeBloc() {
+  HomeBloc([MovieModel? movieModelTest]) {
+    /// set mock model for test
+    if(movieModelTest != null){
+      movieModel = movieModelTest;
+    }
     /// Now playing movies
     movieModel.getNowPlayingMovieFromDatabase().listen((movieList) {
       nowPlayingMovies = movieList;
@@ -41,13 +45,13 @@ class HomeBloc extends ChangeNotifier {
     }).onError((error) {});
 
     /// actor list
-    movieModel.getActorsFromDatabase()?.then((actorList) {
+    movieModel.getActorsFromDatabase().then((actorList) {
       actors = actorList;
       notifyListeners();
     }).catchError((error) {});
 
     /// genre list
-    movieModel.getGenres()!.then((genreList) {
+    movieModel.getGenres().then((genreList) {
       genres = genreList;
       notifyListeners();
 
