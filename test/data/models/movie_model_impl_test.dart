@@ -192,7 +192,7 @@ void main() {
         movieModel.getCreditByMovie(464052),
         completion(
           equals(
-            [getMockCreditForTest().first],
+            [getMockActorForTest()],
           ),
         ),
       );

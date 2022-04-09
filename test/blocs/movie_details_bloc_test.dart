@@ -17,11 +17,11 @@ void main(){
     });
 
     test("Fetch creators test", (){
-      expect(movieDetailsBloc?.crews?.contains(getMockCreditForTest().last), true);
+      expect(movieDetailsBloc?.crews?.contains(getMockActorForTest().first), true);
     });
 
     test("Fetch actor test", (){
-      expect(movieDetailsBloc?.casts?.contains(getMockCreditForTest().first), true);
+      expect(movieDetailsBloc?.casts?.contains(getMockActorForTest().last), true);
     });
   });
 }

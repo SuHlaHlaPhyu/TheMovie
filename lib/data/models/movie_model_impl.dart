@@ -112,20 +112,6 @@ class MovieModelImpl extends MovieModel {
     return Future.value(movieDetails = movieDao.getMoveById(movieId));
   }
 
-  // @override
-  // Future<List<MovieVO>> getNowPlayingMovieFromDatabase() {
-  //   getNowPlayingMovie(1);
-  //   return movieDao
-  //       .getAllMovieEventStream()
-  //       // ignore: void_checks
-  //       .startWith(movieDao.getNowPlayingMovieStream())
-  //       .map((event) => movieDao.getAllMovies())
-  //       .first
-  //       .then((nowPlayingMoviesList) {
-  //     nowPlayingMovies = nowPlayingMoviesList;
-  //     return Future.value(nowPlayingMovies);
-  //   });
-  // }
   @override
   Stream<List<MovieVO>?> getNowPlayingMovieFromDatabase() {
     getNowPlayingMovie(1);
@@ -136,30 +122,6 @@ class MovieModelImpl extends MovieModel {
 
   }
 
-  // @override
-  // Future<List<MovieVO>> getPopularMoviesFromDatabase() {
-  //   getPopularMovies(1);
-  //   return movieDao
-  //       .getAllMovieEventStream()
-  //       // ignore: void_checks
-  //       .startWith(movieDao.getPopularMovieStream())
-  //       .map((event) => movieDao.getAllMovies())
-  //       .first
-  //       .then((popularMoviesList) {
-  //     popularMovies = popularMoviesList;
-  //     return Future.value(popularMovies);
-  //   });
-  // }
-
-  // @override
-  // Stream<List<MovieVO>> getPopularMoviesFromDatabase() {
-  //   getPopularMovies(1);
-  //   return movieDao
-  //       .getAllMovieEventStream()
-  //       .startWith(movieDao.getPopularMovieStream())
-  //       .map((event) => movieDao.getPopularMovies());
-  // }
-
   @override
   Stream<List<MovieVO>?> getPopularMoviesFromDatabase() {
     getPopularMovies(1);
@@ -169,20 +131,6 @@ class MovieModelImpl extends MovieModel {
         .map((event) => movieDao.getPopularMovies());
   }
 
-  // @override
-  // Future<List<MovieVO>> getTopRatedMoviesFromDatabase() {
-  //   getTopRatedMovies(1);
-  //   return movieDao
-  //       .getAllMovieEventStream()
-  //       // ignore: void_checks
-  //       .startWith(movieDao.getTopRatedMovieStream())
-  //       .map((event) => movieDao.getAllMovies())
-  //       .first
-  //       .then((topRelatedMovies) {
-  //     topRatedMovies = topRelatedMovies;
-  //     return Future.value(topRelatedMovies);
-  //   });
-  // }
   @override
   Stream<List<MovieVO>?> getTopRatedMoviesFromDatabase() {
     getTopRatedMovies(1);
