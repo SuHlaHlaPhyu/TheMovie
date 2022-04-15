@@ -61,14 +61,14 @@ class BannerTitleView extends StatelessWidget {
               fontWeight: FontWeight.w500,
             ),
           ),
-          const Text(
-            'Official Reviews',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: TEXT_HEADING_1X,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
+          // const Text(
+          //   'Official Reviews',
+          //   style: TextStyle(
+          //     color: Colors.white,
+          //     fontSize: TEXT_HEADING_1X,
+          //     fontWeight: FontWeight.w500,
+          //   ),
+          // ),
         ],
       ),
     );

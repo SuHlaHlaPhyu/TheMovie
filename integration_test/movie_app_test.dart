@@ -35,19 +35,25 @@ void main() async {
 
   testWidgets("Tap Best Popular movie and Navigate to Details",
       (WidgetTester tester) async {
+
+
+    // upload MyApp widget on screen by using pumpWidget. It take time so we must use "await" and delay before doing others.
     await tester.pumpWidget(const MyApp());
 
     await Future.delayed(const Duration(seconds: 3));
-    await tester.pumpAndSettle(const Duration(seconds: 5));
+    await tester.pumpAndSettle(const Duration(seconds: 5)); // return Future // use await
 
     expect(find.byType(HomePage), findsOneWidget);
     expect(find.text(TEST_DATA_MOVIE_NAME), findsOneWidget);
 
-    await tester.tap(find.text(TEST_DATA_MOVIE_NAME));
-    await tester.pumpAndSettle(const Duration(seconds: 5));
+    await tester.tap(find.text(TEST_DATA_MOVIE_NAME)); // return Future
+
+    await tester.pumpAndSettle(const Duration(seconds: 5)); // return Future
 
     expect(find.text(TEST_DATA_MOVIE_NAME), findsOneWidget);
     expect(find.text(TEST_DATA_RELEASED_YEAR), findsOneWidget);
     expect(find.text(TEST_DATA_RATING), findsOneWidget);
   });
+
+
 }

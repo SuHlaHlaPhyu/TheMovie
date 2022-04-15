@@ -33,12 +33,17 @@ class MovieView extends StatelessWidget {
             height: MARGIN_MEDIUM,
           ),
           Expanded(
-            child: Text(
-              movie?.title ?? "",
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: TEXT_REGULAR_2X,
-                fontWeight: FontWeight.w600,
+            child: GestureDetector(
+              onTap: (){
+                onTapMovie();
+              },
+              child: Text(
+                movie?.title ?? "",
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: TEXT_REGULAR_2X,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ),
           ),
@@ -46,10 +51,10 @@ class MovieView extends StatelessWidget {
             height: MARGIN_MEDIUM,
           ),
           Row(
-            children: const [
+            children:  [
               Text(
-                '8.9',
-                style: TextStyle(
+                movie?.voteAverage.toString() ?? '',
+                style: const TextStyle(
                   color: Colors.white,
                   fontSize: TEXT_REGULAR,
                   fontWeight: FontWeight.bold,

@@ -508,8 +508,8 @@ class DetailAppbarInfoView extends StatelessWidget {
         Row(
           children: [
             MovieDetailsYearView(
-             // releaseDate: movie?.releaseDate?.substring(0, 4) ?? "",
-              releaseDate: movie?.releaseDate ?? "",
+              releaseDate: movie?.releaseDate?.substring(0, 4) ?? "",
+              // releaseDate: movie?.releaseDate ?? "",
             ),
             const Spacer(),
             Row(

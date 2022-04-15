@@ -33,7 +33,6 @@ class HomeBloc extends ChangeNotifier {
       //   nowPlayingMovies?.sort((a,b) => a.id! - b.id!);
       // }
       notifyListeners();
-      print("========> $nowPlayingMovies");
     }).onError((error) {});
 
     /// Popular movies
@@ -60,7 +59,7 @@ class HomeBloc extends ChangeNotifier {
       notifyListeners();
 
       /// movie by genre
-      getMovieByGenreAndFresh(genres?.first.id ?? 1);
+      getMovieByGenreAndFresh(genres?.first.id ?? 28);
     }).catchError((error) {});
 
     /// genre list
@@ -69,7 +68,7 @@ class HomeBloc extends ChangeNotifier {
       notifyListeners();
 
       /// movie by genre
-      getMovieByGenreAndFresh(genres?.first.id ?? 1);
+      getMovieByGenreAndFresh(genres?.first.id ?? 28);
       notifyListeners();
     }).catchError((error) {});
   }
